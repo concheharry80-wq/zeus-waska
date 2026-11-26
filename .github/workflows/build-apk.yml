@@ -1,0 +1,35 @@
+name: Build ZEUS WASKA Android APK
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build-apk:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.27.4'
+          channel: 'stable'
+          cache: true
+      - name: Compilar ZEUS WASKA
+        run: |
+          APP_DIR=$(dirname "$(find . -name pubspec.yaml | head -n 1)")
+          echo "Proyecto encontrado en: $APP_DIR"
+          cd "$APP_DIR"
+          flutter pub get
+          flutter analyze
+          flutter test
+          flutter build apk --release
+          cp build/app/outputs/flutter-apk/app-release.apk "$GITHUB_WORKSPACE/ZeusWaska-v1.0.apk"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ZeusWaska-v1.0
+          path: ZeusWaska-v1.0.apk
