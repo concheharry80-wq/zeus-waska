@@ -25,10 +25,10 @@ jobs:
           echo "Proyecto encontrado en: $APP_DIR"
           cd "$APP_DIR"
           sed -i 's/const Rect\.fromCenter/Rect.fromCenter/g' lib/widgets/neon_widgets.dart
+          flutter pub get
           if [ ! -f android/gradlew ]; then
             (cd android && gradle wrapper --gradle-version 8.10.2)
           fi
-          flutter pub get
           flutter analyze --no-fatal-infos
           flutter test
           flutter build apk --release
